@@ -1,4 +1,4 @@
 # tmdb-movie-browser-spa
-IT 4403 Term Project – Movie Discovery Single Page Application built with jQuery, AJAX, and the TMDB API.
+IT 4403 Term Project – Single Page Application (SPA) that integrates the TMDB API to search, browse, and display movie data dynamically using JavaScript and RESTful API calls.
 
 Testing repo
