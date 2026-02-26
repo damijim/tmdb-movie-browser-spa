@@ -4,8 +4,13 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="IT4403 Advanced Web & Mobile group project: a single page application using the TMDB API.">
+  <meta name="author" content="James Sharman, Chris Henning">
+  <meta name="robots" content="noindex, nofollow">
+
   <title>Movie Discovery SPA (TMDB v3)</title>
 
+  <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="stylesheet" href="css/styles.css" />
 
   <!-- jQuery -->
@@ -15,52 +20,205 @@
 </head>
 
 <body>
-  <header class="topbar">
-    <div class="container topbar__row">
-      <div class="brand">
-        <span class="brand__logo">🎬</span>
-        <span class="brand__name">Movie Discovery SPA</span>
+<header class="topbar">
+  <div class="container topbar__row">
+    <div class="brand">
+      <span class="brand__logo">🎬</span>
+      <span class="brand__name">Movie Discovery SPA</span>
+    </div>
+
+    <nav class="nav">
+      <a class="nav__link" href="#home">Home</a>
+      <a class="nav__link" href="#discover">Discover</a>
+      <a class="nav__link" href="#lists">My Lists</a>
+    </nav>
+
+    <div class="topbar__actions">
+      <form id="searchForm" class="search" autocomplete="off">
+        <input id="searchInput" class="search__input" type="search" placeholder="Search movies…" />
+        <button class="btn btn--primary" type="submit">Search</button>
+      </form>
+
+      <button id="authBtn" class="btn" type="button">Log in</button>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+  <section id="statusBar" class="status" aria-live="polite"></section>
+
+  <section id="app" class="app">
+    <!-- Basic SPA view containers.
+         Router/ui.js can swap these later, but this keeps the page from feeling empty right now. -->
+
+    <section id="viewHome" class="view is-active" aria-label="Home view">
+      <div class="view__header">
+        <h2 class="view__title">Popular Right Now</h2>
+        <p class="view__subtitle muted">This is a placeholder layout so we can style the grid/cards. Data will display Popular without logging in. Data will come from TMDB.</p>
       </div>
 
-      <nav class="nav">
-        <a class="nav__link" href="#home">Home</a>
-        <a class="nav__link" href="#discover">Discover</a>
-        <a class="nav__link" href="#lists">My Lists</a>
-      </nav>
+      <div class="grid" aria-label="Popular movies grid">
+        <article class="card movie-tile">
+          <img class="poster" src="https://via.placeholder.com/400x600?text=Poster" alt="Movie poster placeholder" />
+          <div class="card__body">
+            <h3 class="card__title">Example Movie Title</h3>
+            <p class="card__meta">2026 • ⭐ 7.8</p>
+            <div class="card__actions">
+              <button class="btn btn--small" type="button">Details</button>
+              <button class="btn btn--small" type="button">+ Favorite</button>
+            </div>
+          </div>
+        </article>
 
-      <div class="topbar__actions">
-        <form id="searchForm" class="search" autocomplete="off">
-          <input id="searchInput" class="search__input" type="search" placeholder="Search movies…" />
-          <button class="btn btn--primary" type="submit">Search</button>
-        </form>
+        <article class="card movie-tile">
+          <img class="poster" src="https://via.placeholder.com/400x600?text=Poster" alt="Movie poster placeholder" />
+          <div class="card__body">
+            <h3 class="card__title">Another Movie</h3>
+            <p class="card__meta">2025 • ⭐ 6.9</p>
+            <div class="card__actions">
+              <button class="btn btn--small" type="button">Details</button>
+              <button class="btn btn--small" type="button">+ Watchlist</button>
+            </div>
+          </div>
+        </article>
 
-        <button id="authBtn" class="btn" type="button">Log in</button>
+        <article class="card movie-tile">
+          <img class="poster" src="https://via.placeholder.com/400x600?text=Poster" alt="Movie poster placeholder" />
+          <div class="card__body">
+            <h3 class="card__title">Movie #3</h3>
+            <p class="card__meta">2024 • ⭐ 8.1</p>
+            <div class="card__actions">
+              <button class="btn btn--small" type="button">Details</button>
+              <button class="btn btn--small" type="button">+ Favorite</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card movie-tile">
+          <img class="poster" src="https://via.placeholder.com/400x600?text=Poster" alt="Movie poster placeholder" />
+          <div class="card__body">
+            <h3 class="card__title">Movie #4</h3>
+            <p class="card__meta">2023 • ⭐ 7.2</p>
+            <div class="card__actions">
+              <button class="btn btn--small" type="button">Details</button>
+              <button class="btn btn--small" type="button">+ Watchlist</button>
+            </div>
+          </div>
+        </article>
+
+        <article class="card movie-tile">
+          <img class="poster" src="https://via.placeholder.com/400x600?text=Poster" alt="Movie poster placeholder" />
+          <div class="card__body">
+            <h3 class="card__title">Movie #5</h3>
+            <p class="card__meta">2022 • ⭐ 7.5</p>
+            <div class="card__actions">
+              <button class="btn btn--small" type="button">Details</button>
+              <button class="btn btn--small" type="button">+ Favorite</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="viewDiscover" class="view" aria-label="Discover view">
+      <div class="view__header">
+        <h2 class="view__title">Discover</h2>
+        <p class="view__subtitle muted">Filters will go here. Keeping it simple: genre + sort + page.</p>
+      </div>
+
+      <div class="filters" aria-label="Discover filters">
+        <label class="field">
+          <span class="field__label">Genre</span>
+          <select class="field__control" id="genreSelect">
+            <option value="">Any</option>
+            <option value="28">Action</option>
+            <option value="35">Comedy</option>
+            <option value="18">Drama</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="field__label">Sort</span>
+          <select class="field__control" id="sortSelect">
+            <option value="popularity.desc">Popularity</option>
+            <option value="vote_average.desc">Rating</option>
+            <option value="release_date.desc">Newest</option>
+          </select>
+        </label>
+
+        <button class="btn btn--primary" type="button">Apply</button>
+      </div>
+
+      <div class="grid" aria-label="Discover results grid">
+        <article class="card movie-tile">
+          <img class="poster" src="https://via.placeholder.com/400x600?text=Poster" alt="Movie poster placeholder" />
+          <div class="card__body">
+            <h3 class="card__title">Discover Result</h3>
+            <p class="card__meta">2026 • ⭐ 7.0</p>
+            <div class="card__actions">
+              <button class="btn btn--small" type="button">Details</button>
+              <button class="btn btn--small" type="button">Watchlist</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="pager" aria-label="Pagination controls">
+        <button class="btn btn--small" type="button">Prev</button>
+        <span class="pager__text muted">Page 1</span>
+        <button class="btn btn--small" type="button">Next</button>
+      </div>
+    </section>
+
+    <section id="viewLists" class="view" aria-label="My Lists view">
+      <div class="view__header">
+        <h2 class="view__title">My Lists</h2>
+        <p class="view__subtitle muted">Favorites and Watchlist show up here after login.</p>
+      </div>
+
+      <div class="two-col">
+        <section class="panel">
+          <h3 class="panel__title">Favorites</h3>
+          <p class="muted">Nothing yet.</p>
+        </section>
+
+        <section class="panel">
+          <h3 class="panel__title">Watchlist</h3>
+          <p class="muted">Nothing yet.</p>
+        </section>
+      </div>
+    </section>
+  </section>
+
+  <!-- Actor modal markup (hidden by default). ui.js can fill this in later. -->
+  <div id="actorModal" class="modal" aria-hidden="true" aria-label="Actor details modal">
+    <div class="modal__backdrop"></div>
+    <div class="modal__panel" role="dialog" aria-modal="true">
+      <div class="modal__header">
+        <h3 class="modal__title">Actor Name</h3>
+        <button class="btn btn--small" type="button" aria-label="Close actor modal">Close</button>
+      </div>
+      <div class="modal__content">
+        <p class="muted">Placeholder content. ui.js will replace this with real actor details.</p>
       </div>
     </div>
-  </header>
+  </div>
+</main>
 
-  <main class="container">
-    <section id="statusBar" class="status" aria-live="polite"></section>
-    <section id="app" class="app"></section>
-  </main>
-
-  <footer class="footer">
-    <div class="container footer__row">
-      <div>
-        <strong>Student Project Website Disclaimer:</strong>
-        This is a course project for educational purposes only.
-      </div>
-      <div class="muted">
-        Data provided by TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.
-      </div>
+<footer class="footer">
+  <div class="container footer__row">
+    <div>
+      <strong>Student Project Website Disclaimer:</strong>
+      This is a course project for educational purposes only for IT 4403 - Advanced Web and Applications at KSU. Data provided by TMDB. This product uses the TMDB API but is not endorsed or certified by TMDB.
     </div>
-  </footer>
+  </div>
+</footer>
 
-  <!-- App scripts -->
-  <script src="js/store.js"></script>
-  <script src="js/tmdbApi.js"></script>
-  <script src="js/ui.js"></script>
-  <script src="js/router.js"></script>
-  <script src="js/app.js"></script>
+<!-- App scripts (will be incorporated later) -->
+<script src="js/store.js"></script>
+<script src="js/tmdbApi.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/router.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>

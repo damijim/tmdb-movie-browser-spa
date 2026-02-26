@@ -1,2 +1,470 @@
-/* Default sitewide styles */
+/* TMDB SPA base styles
+  - Most of this is just: top bar + container + cards/grid + a basic modal
+*/
 
+/* Small reset so sizing is predictable everywhere */
+*,
+*::before,
+*::after {
+    box-sizing: border-box; /* Prevents padding from breaking widths */
+}
+
+html,
+body {
+    height: 100%; /* Lets sticky header/nav + full-height layouts behave */
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; /* Safe default fonts */
+    line-height: 1.5; /* Makes text readable without thinking about it */
+    color: #e2e8f0;
+    background: #0f172a; /* Dark background so the content feels like an app */
+}
+
+/* Keeps the app from stretching too wide on a big monitor */
+.container {
+    width: min(1100px, 100%);
+    margin: 0 auto; /* Centers the content */
+    padding: 0 16px; /* Side padding so it doesn’t hug the screen edge */
+}
+
+/* Top bar stays visible so nav/search/auth are always right there */
+.topbar {
+    position: sticky; /* Sticks to the top while you scroll */
+    top: 0;
+    z-index: 10; /* Keeps it above cards and page content */
+    background: rgba(15, 23, 42, 0.92);
+    backdrop-filter: blur(8px); /* Slight blur behind the header */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.topbar__row {
+    display: flex; /* Brand + nav + actions all on one row */
+    align-items: center;
+    gap: 16px;
+    padding: 14px 0;
+}
+
+.brand {
+    display: flex; /* Logo + name side by side */
+    align-items: center;
+    gap: 10px;
+    user-select: none; /* Prevents annoying highlight while clicking around */
+}
+
+.brand__logo {
+    font-size: 20px; /* Emoji/icon size */
+}
+
+.brand__name {
+    font-weight: 700;
+    letter-spacing: 0.2px;
+}
+
+/* Nav links in the header */
+.nav {
+    display: flex; /* Horizontal nav */
+    gap: 10px;
+    margin-left: 8px; /* Small spacing after the brand */
+}
+
+.nav__link {
+    color: rgba(226, 232, 240, 0.85);
+    text-decoration: none;
+    padding: 8px 10px; /* Gives it a bigger click target */
+    border-radius: 10px;
+    transition: background 120ms ease, color 120ms ease; /* Soft hover */
+}
+
+.nav__link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+/* Router can toggle this for whatever view is active */
+.nav__link.is-active {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+/* Pushes search/auth to the right side of the header */
+.topbar__actions {
+    margin-left: auto; /* This is what actually pushes it right */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Search form: input + button */
+.search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.search__input {
+    width: clamp(180px, 28vw, 340px); /* Doesn’t get too tiny or too huge */
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(2, 6, 23, 0.55);
+    color: #e2e8f0;
+    outline: none; /* Focus ring is handled below */
+}
+
+.search__input::placeholder {
+    color: rgba(226, 232, 240, 0.60);
+}
+
+.search__input:focus {
+    border-color: rgba(56, 189, 248, 0.70);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15); /* Visible focus ring for keyboard users too */
+}
+
+/* Buttons: one base style, then small + primary variants */
+.btn {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.06);
+    color: #e2e8f0;
+    cursor: pointer;
+    transition: transform 80ms ease, background 120ms ease, border-color 120ms ease;
+}
+
+.btn:hover {
+    background: rgba(255, 255, 255, 0.10);
+    border-color: rgba(255, 255, 255, 0.22);
+}
+
+.btn:active {
+    transform: translateY(1px); /* Tiny press effect */
+}
+
+/* Primary is used for “main action” buttons (Search, Apply, etc.) */
+.btn--primary {
+    background: rgba(56, 189, 248, 0.18);
+    border-color: rgba(56, 189, 248, 0.45);
+}
+
+.btn--primary:hover {
+    background: rgba(56, 189, 248, 0.26);
+    border-color: rgba(56, 189, 248, 0.60);
+}
+
+/* Small is used on movie tiles and compact controls */
+.btn--small {
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 13px;
+}
+
+/* Main area spacing */
+main.container {
+    padding-top: 18px; /* Space below the sticky header */
+    padding-bottom: 22px; /* Space above the footer */
+}
+
+/* Status bar is where we can put: loading, errors, “logged in”, etc. */
+.status {
+    min-height: 18px; /* Keeps layout from jumping when status text changes */
+    margin: 10px 0 16px;
+    padding: 12px 14px;
+    border-radius: 14px;
+    background: rgba(2, 6, 23, 0.55);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    color: rgba(226, 232, 240, 0.85);
+}
+
+/* These are optional, but it’s nice to have simple “error/ok” states */
+.status.status--error {
+    border-color: rgba(248, 113, 113, 0.50);
+    color: #fecaca;
+}
+
+.status.status--ok {
+    border-color: rgba(34, 197, 94, 0.45);
+    color: #bbf7d0;
+}
+
+/* Views: we keep all view containers in the DOM and just hide/show them */
+.view {
+    display: none; /* Default: hidden */
+}
+
+.view.is-active {
+    display: block; /* Router flips this on for the active view */
+}
+
+/* View header spacing so the title/subtitle don’t feel cramped */
+.view__header {
+    margin: 6px 0 14px;
+}
+
+.view__title {
+    margin: 0 0 4px;
+    font-size: 20px;
+}
+
+.view__subtitle {
+    margin: 0;
+}
+
+/* Movie grid for tiles (Home + Discover) */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 5 tiles across on wider screens */
+    gap: 14px;
+}
+
+/* Cards are the basic “tile” look */
+.card {
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.22);
+    overflow: hidden; /* Keeps poster corners clean */
+}
+
+/* Poster images: fixed aspect ratio so tiles line up even if images load slow */
+.poster {
+    width: 100%;
+    aspect-ratio: 2 / 3; /* Standard movie poster shape */
+    display: block;
+    background: rgba(255, 255, 255, 0.06); /* Placeholder background while loading */
+    object-fit: cover; /* Crops without stretching */
+}
+
+.card__body {
+    padding: 14px;
+}
+
+.card__title {
+    margin: 0 0 6px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.card__meta {
+    margin: 0 0 10px;
+    font-size: 13px;
+    color: rgba(226, 232, 240, 0.70);
+}
+
+/* Tile buttons (Details/Favorite/Watchlist) */
+.card__actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap; /* Keeps buttons from overflowing on smaller cards */
+}
+
+/* Discover filters row */
+.filters {
+    display: flex; /* Keeps the filters on one row on desktop */
+    gap: 12px;
+    align-items: end; /* Aligns the bottoms of inputs and the button */
+    padding: 12px;
+    margin: 0 0 14px;
+    border-radius: 16px;
+    background: rgba(2, 6, 23, 0.40);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+/* Field is label + control stacked */
+.field {
+    display: grid;
+    gap: 6px;
+}
+
+.field__label {
+    font-size: 12px;
+    color: rgba(226, 232, 240, 0.70);
+}
+
+/* Select styling so it matches the input/button look */
+.field__control {
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(2, 6, 23, 0.55);
+    color: #e2e8f0;
+    outline: none;
+}
+
+.field__control:focus {
+    border-color: rgba(56, 189, 248, 0.70);
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+}
+
+/* Pagination row */
+.pager {
+    display: flex; /* Keeps Prev / Page text / Next in a neat line */
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.pager__text {
+    font-size: 13px;
+}
+
+/* Two columns for My Lists (favorites + watchlist) */
+.two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Two panels side by side */
+    gap: 14px;
+}
+
+/* Panel is a simple container for list content */
+.panel {
+    border-radius: 16px;
+    padding: 14px;
+    background: rgba(2, 6, 23, 0.40);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.panel__title {
+    margin: 0 0 10px;
+    font-size: 16px;
+}
+
+/* Footer */
+.footer {
+    margin-top: 18px;
+    padding: 18px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(2, 6, 23, 0.35);
+}
+
+.footer__row {
+    display: flex; /* If we add more footer blocks later, they’ll sit side by side */
+    justify-content: space-between;
+    gap: 12px;
+    align-items: flex-start;
+    font-size: 13px;
+}
+
+.muted {
+    color: rgba(226, 232, 240, 0.65); /* “Secondary text” class used in a few places */
+}
+
+/* Modal for actor details (starts hidden; JS can toggle .is-open) */
+.modal {
+    position: fixed; /* Covers the full screen */
+    inset: 0;
+    z-index: 50; /* Above everything else */
+    display: none; /* Hidden until opened */
+}
+
+.modal.is-open {
+    display: grid;
+    place-items: center; /* Centers the panel */
+}
+
+/* Dark overlay behind the modal panel */
+.modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+/* The actual modal “box” */
+.modal__panel {
+    position: relative; /* Keeps it above the backdrop */
+    width: min(760px, calc(100% - 28px)); /* Responsive max width with padding */
+    border-radius: 18px;
+    background: rgba(15, 23, 42, 0.96);
+    border: 1px solid rgba(255, 255, 255, 0.10);
+    box-shadow: 0 20px 70px rgba(0, 0, 0, 0.55);
+    overflow: hidden;
+}
+
+/* Modal header row: title on left, close button on right */
+.modal__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.modal__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.modal__content {
+    padding: 16px;
+    color: rgba(226, 232, 240, 0.85);
+}
+
+/* Responsive tweaks */
+@media (max-width: 980px) {
+    .grid {
+        grid-template-columns: repeat(4, 1fr); /* Slightly fewer tiles per row */
+    }
+}
+
+@media (max-width: 760px) {
+    .topbar__row {
+        flex-wrap: wrap; /* Keeps header from getting cramped */
+    }
+
+    .topbar__actions {
+        width: 100%;
+        justify-content: space-between; /* Search on left, login on right */
+    }
+
+    .search__input {
+        width: 100%; /* Input takes the full row on small screens */
+    }
+
+    .grid {
+        grid-template-columns: repeat(2, 1fr); /* Two tiles per row */
+    }
+
+    .filters {
+        flex-direction: column; /* Stack filters so they don’t squish */
+        align-items: stretch;
+    }
+
+    .two-col {
+        grid-template-columns: 1fr; /* Stack Favorites + Watchlist panels */
+    }
+
+    .footer__row {
+        flex-direction: column; /* Footer stacks cleanly */
+    }
+}
+
+@media (max-width: 420px) {
+    .grid {
+        grid-template-columns: 1fr; /* One tile per row */
+    }
+}
+
+/* Links look better on dark background */
+a {
+    color: #7dd3fc;
+}
+
+a:hover {
+    color: #bae6fd;
+}
+
+/* Small hover effect on movie tiles so they feel clickable */
+.card {
+    transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+}
+
+/* Only lift on hover for devices that actually have hover (avoids weirdness on mobile) */
+@media (hover: hover) and (pointer: fine) {
+    .card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(255, 255, 255, 0.18);
+        box-shadow: 0 16px 45px rgba(0, 0, 0, 0.35);
+    }
+}
