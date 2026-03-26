@@ -269,6 +269,10 @@ main.container {
     flex-wrap: wrap; /* Keeps buttons from overflowing on smaller cards */
 }
 
+#viewLists .card__actions { /* Fix for the "Remove" button position on viewLists */
+    justify-content: center;
+}
+
 /* Discover filters row */
 .filters {
     display: flex; /* Keeps the filters on one row on desktop */

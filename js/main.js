@@ -197,6 +197,42 @@ function bindEvents() {
     }
   });
 
+  //Remove button to remove from favorites and watchlist
+  $(document).on("click", ".js-remove-btn", async function () {
+    if (!Store.state.sessionId || !Store.state.accountId) {
+      UI.setStatus("Please log in first to update your lists.", "error");
+      return;
+    }
+
+    const movieId = $(this).data("movie-id");
+    const listType = $(this).data("list-type");
+
+    try {
+      if (listType === "favorite") {
+        await TMDB.setFavorite(
+            Store.state.accountId,
+            Store.state.sessionId,
+            movieId,
+            false
+        );
+        UI.setStatus("Movie removed from Favorites.", "ok");
+      } else if (listType === "watchlist") {
+        await TMDB.setWatchlist(
+            Store.state.accountId,
+            Store.state.sessionId,
+            movieId,
+            false
+        );
+        UI.setStatus("Movie removed from Watchlist.", "ok");
+      }
+
+      await loadMyLists(true); //Fix for the status message of "Removed movie", allowing page to update w/o the status message
+    } catch (error) {
+      console.error(error);
+      UI.setStatus("Could not remove movie from your list.", "error");
+    }
+  });
+
   $("#detailsBackBtn").on("click", function () {
     Router.go("home");
   });
@@ -282,7 +318,7 @@ async function loadDiscover() {
   }
 }
 
-async function loadMyLists() {
+async function loadMyLists(skipStatusMessage = false) {
   if (!Store.state.sessionId || !Store.state.accountId) {
     $("#viewLists .panel").first().html(`
       <h3 class="panel__title">Favorites</h3>
@@ -299,7 +335,9 @@ async function loadMyLists() {
   }
 
   try {
-    UI.setStatus("Loading your lists...");
+    if (!skipStatusMessage) {
+      UI.setStatus("Loading your lists...");
+    }
 
     const [favoritesData, watchlistData] = await Promise.all([
       TMDB.getFavoriteMovies(Store.state.accountId, Store.state.sessionId, 1),
@@ -307,7 +345,9 @@ async function loadMyLists() {
     ]);
 
     renderMyLists(favoritesData.results || [], watchlistData.results || []);
-    UI.setStatus("Loaded your Favorites and Watchlist.", "ok");
+    if (!skipStatusMessage) {
+      UI.setStatus("Loaded your Favorites and Watchlist.", "ok");
+    }
   } catch (error) {
     console.error(error);
     UI.setStatus("Could not load your lists.", "error");
@@ -316,12 +356,16 @@ async function loadMyLists() {
 
 function renderMyLists(favorites, watchlist) {
   const favoritesHtml = favorites.length
-    ? favorites.map(renderListItemCard).join("")
-    : `<p class="muted">No favorites yet.</p>`;
+      ? favorites.map(function (movie) {
+        return renderListItemCard(movie, "favorite");
+      }).join("")
+      : `<p class="muted">No favorites yet.</p>`;
 
   const watchlistHtml = watchlist.length
-    ? watchlist.map(renderListItemCard).join("")
-    : `<p class="muted">No watchlist items yet.</p>`;
+      ? watchlist.map(function (movie) {
+        return renderListItemCard(movie, "watchlist");
+      }).join("")
+      : `<p class="muted">No watchlist items yet.</p>`;
 
   $("#viewLists .panel").first().html(`
     <h3 class="panel__title">Favorites</h3>
@@ -334,7 +378,7 @@ function renderMyLists(favorites, watchlist) {
   `);
 }
 
-function renderListItemCard(movie) {
+function renderListItemCard(movie, listType) {
   const title = movie.title || "Untitled";
   const year = movie.release_date ? movie.release_date.slice(0, 4) : "—";
   const rating = typeof movie.vote_average === "number"
@@ -355,6 +399,11 @@ function renderListItemCard(movie) {
       <div class="card__body">
         <h3 class="card__title">${title}</h3>
         <p class="card__meta">${year} • ⭐ ${rating}</p>
+        <div class="card__actions">
+          <button class="btn btn--small js-remove-btn" type="button" data-movie-id="${movie.id}" data-list-type="${listType}">
+            Remove
+          </button>
+        </div>
       </div>
     </article>
   `;
