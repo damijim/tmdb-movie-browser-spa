@@ -77,7 +77,7 @@ window.UI = (function () {
     if (Store.state.homeMode === "search") {
       $subtitle.text(`Showing search results for "${Store.state.homeQuery}"`);
     } else {
-      $subtitle.text("Live data loaded from TMDB.");
+      $subtitle.text("Browse popular movies or search for a title using live TMDB data.");
     }
 
     const results = data?.results || [];

@@ -16,6 +16,7 @@ function bindEvents() {
     const viewName = Router.getViewFromHash();
     Store.state.currentView = viewName;
     UI.setActiveView(viewName);
+    window.scrollTo(0, 0); //Fix for the scrolling issue when change views, go back to top on view change
 
     if (viewName === "home") {
       loadHome();
