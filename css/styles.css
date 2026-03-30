@@ -1,12 +1,10 @@
-/* TMDB SPA base styles
-  - Most of this is just: top bar + container + cards/grid + a basic modal
-*/
+/* TMDB SPA base styles */
 
 /* Small reset so sizing is predictable everywhere */
 *,
 *::before,
 *::after {
-    box-sizing: border-box; /* Prevents padding from breaking widths */
+    box-sizing: border-box;
 }
 
 html,
@@ -16,45 +14,45 @@ body {
 
 body {
     margin: 0;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif; /* Safe default fonts */
-    line-height: 1.5; /* Makes text readable without thinking about it */
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    line-height: 1.5;
     color: #e2e8f0;
-    background: #0f172a; /* Dark background so the content feels like an app */
+    background: #0f172a;
 }
 
-/* Keeps the app from stretching too wide on a big monitor */
+/* Container */
 .container {
     width: min(1100px, 100%);
-    margin: 0 auto; /* Centers the content */
+    margin: 0 auto;
     padding: 0 16px; /* Side padding so it doesn’t hug the screen edge */
 }
 
-/* Top bar stays visible so nav/search/auth are always right there */
+/* Top bar stays visible so nav/search/auth */
 .topbar {
-    position: sticky; /* Sticks to the top while you scroll */
+    position: sticky;
     top: 0;
-    z-index: 10; /* Keeps it above cards and page content */
+    z-index: 10;
     background: rgba(15, 23, 42, 0.92);
     backdrop-filter: blur(8px); /* Slight blur behind the header */
     border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .topbar__row {
-    display: flex; /* Brand + nav + actions all on one row */
+    display: flex;
     align-items: center;
     gap: 16px;
     padding: 14px 0;
 }
 
-.brand {
-    display: flex; /* Logo + name side by side */
+.brand { /* Logo + name side by side */
+    display: flex;
     align-items: center;
     gap: 10px;
-    user-select: none; /* Prevents annoying highlight while clicking around */
+    user-select: none;
 }
 
 .brand__logo {
-    font-size: 20px; /* Emoji/icon size */
+    font-size: 20px;
 }
 
 .brand__name {
@@ -74,7 +72,7 @@ body {
     text-decoration: none;
     padding: 8px 10px; /* Gives it a bigger click target */
     border-radius: 10px;
-    transition: background 120ms ease, color 120ms ease; /* Soft hover */
+    transition: background 120ms ease, color 120ms ease;
 }
 
 .nav__link:hover {
@@ -110,7 +108,7 @@ body {
     border: 1px solid rgba(255, 255, 255, 0.12);
     background: rgba(2, 6, 23, 0.55);
     color: #e2e8f0;
-    outline: none; /* Focus ring is handled below */
+    outline: none;
 }
 
 .search__input::placeholder {
@@ -119,7 +117,7 @@ body {
 
 .search__input:focus {
     border-color: rgba(56, 189, 248, 0.70);
-    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15); /* Visible focus ring for keyboard users too */
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15); /* Visible focus ring for keyboard users */
 }
 
 /* Buttons: one base style, then small + primary variants */
@@ -139,7 +137,7 @@ body {
 }
 
 .btn:active {
-    transform: translateY(1px); /* Tiny press effect */
+    transform: translateY(1px);
 }
 
 /* Primary is used for “main action” buttons (Search, Apply, etc.) */
@@ -162,8 +160,8 @@ body {
 
 /* Main area spacing */
 main.container {
-    padding-top: 18px; /* Space below the sticky header */
-    padding-bottom: 22px; /* Space above the footer */
+    padding-top: 18px;
+    padding-bottom: 22px;
 }
 
 /* Status bar is where we can put: loading, errors, “logged in”, etc. */
@@ -275,7 +273,7 @@ main.container {
 
 /* Discover filters row */
 .filters {
-    display: flex; /* Keeps the filters on one row on desktop */
+    display: flex;
     gap: 12px;
     align-items: end; /* Aligns the bottoms of inputs and the button */
     padding: 12px;
@@ -368,13 +366,13 @@ main.container {
 .modal {
     position: fixed; /* Covers the full screen */
     inset: 0;
-    z-index: 50; /* Above everything else */
+    z-index: 50;
     display: none; /* Hidden until opened */
 }
 
 .modal.is-open {
     display: grid;
-    place-items: center; /* Centers the panel */
+    place-items: center;
 }
 
 /* Dark overlay behind the modal panel */
@@ -386,8 +384,8 @@ main.container {
 
 /* The actual modal “box” */
 .modal__panel {
-    position: relative; /* Keeps it above the backdrop */
-    width: min(760px, calc(100% - 28px)); /* Responsive max width with padding */
+    position: relative;
+    width: min(760px, calc(100% - 28px));
     border-radius: 18px;
     background: rgba(15, 23, 42, 0.96);
     border: 1px solid rgba(255, 255, 255, 0.10);
@@ -417,19 +415,19 @@ main.container {
 
 /* Responsive tweaks */
 @media (max-width: 980px) {
-    .grid {
-        grid-template-columns: repeat(4, 1fr); /* Slightly fewer tiles per row */
+    .grid { /* Slightly fewer tiles per row */
+        grid-template-columns: repeat(4, 1fr);
     }
 }
 
 @media (max-width: 760px) {
     .topbar__row {
-        flex-wrap: wrap; /* Keeps header from getting cramped */
+        flex-wrap: wrap;
     }
 
     .topbar__actions {
         width: 100%;
-        justify-content: space-between; /* Search on left, login on right */
+        justify-content: space-between;
     }
 
     .search__input {
@@ -456,11 +454,10 @@ main.container {
 
 @media (max-width: 420px) {
     .grid {
-        grid-template-columns: 1fr; /* One tile per row */
+        grid-template-columns: 1fr;
     }
 }
 
-/* Links look better on dark background */
 a {
     color: #7dd3fc;
 }
@@ -477,7 +474,7 @@ a:hover {
 /* Modal fix: if content is taller than the screen, keep it usable */
 .modal.is-open {
     place-items: start center; /* Don’t vertically center a huge modal */
-    padding: 18px 0; /* Gives breathing room top/bottom */
+    padding: 18px 0;
 }
 
 .modal__panel {
